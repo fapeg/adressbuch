@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Hallo!</title>
+	<link href="static/style.css" rel="stylesheet" type="text/css">
+	<link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+</head>
+
+
+<body>
+	<div id='page'>
+
+<h1>Adressbuch</h1>
+
+<h2>Einträge</h2>
+<table> 
+	<th>Vorname</th> <th>Name</th> <th>Titel</th> <th>Straße</th> <th>PLZ</th> <th>Ort</th> <th>Geburtsdatum</th> <th>Festnetz</th> <th>Mobil</th> <th>E-Mail</th> <th>Homepage</th> <th>Twitter</th>
+		{% for line in entries: %}
+			<tr>
+			{% for eintrag in line:  %}
+			
+			<td>{{eintrag}}</td>
+			
+			{% endfor %}
+		</tr>
+		{% endfor %}
+</table>
+</div>
+</body>
+</html>
