@@ -1,14 +1,7 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-	<title>Hallo!</title>
-	<link href="static/style.css" rel="stylesheet" type="text/css">
-	<link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
-</head>
+<!-- extend from base layout -->
+{% extends "index.htm" %}
 
-
-<body>
-	<div id='page'>
+{% block content %}
 
 <h1>Adressbuch</h1>
 
@@ -25,6 +18,5 @@
 		</tr>
 		{% endfor %}
 </table>
-</div>
-</body>
-</html>
+<p><a href="login">Einloggen</a></p>
+{% endblock %}

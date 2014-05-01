@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<link href="static/style.css" rel="stylesheet" type="text/css">
+	<link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+    {% if title %}
+    <title>{{title}} - Adressbuch</title>
+    {% else %}
+    <title>Adressbuch</title>
+    {% endif %}
+  </head>
+  <body>
+	 <div id="page">
+    <div>Adressbuch: <a href="/">Start</a></div>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }} </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+	</div>
+  </body>
+</html>

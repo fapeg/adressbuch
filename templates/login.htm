@@ -1,0 +1,27 @@
+<!-- extend from base layout -->
+{% extends "index.htm" %}
+
+{% block content %}
+
+<h1>Adressbuch</h1>
+
+<h2>Login</h2>
+<form action="" method="post" name="login">
+    {{form.hidden_tag()}}
+    <p>
+        <label>Benutzername:<br>
+        {{form.username(size=30)}}</label><br>
+        {% for error in form.errors.username %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>
+        <label>Passwort:<br>
+        {{form.password(size=30)}}</label><br>
+        {% for error in form.errors.password %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>
+		
+    </p>
+    <p><label>{{form.remember_me}} eingeloggt bleiben</label></p>
+    <p><input type="submit" value="einloggen"></p>
+</form>
+{% endblock %}
