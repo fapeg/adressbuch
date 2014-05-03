@@ -6,7 +6,7 @@
 <h1>Adressbuch</h1>
 
 <h2>Einträge</h2>
-<table> 
+<table style="width:600px;"> 
 	<th>Vorname</th> <th>Name</th> <th>Titel</th> <th>Straße</th> <th>PLZ</th> <th>Ort</th> <th>Geburtsdatum</th> <th>Festnetz</th> <th>Mobil</th> <th>E-Mail</th> <th>Homepage</th> <th>Twitter</th>
 		{% for line in entries: %}
 			<tr>
@@ -18,5 +18,14 @@
 		</tr>
 		{% endfor %}
 </table>
+<p>
+	<!--
+{ '''
+{ for u in users }
+{ u.username }<br>
+{ endfor }
+ ''' }
+		-->
+</p>
 <p><a href="login">Einloggen</a></p>
 {% endblock %}
