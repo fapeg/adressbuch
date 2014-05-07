@@ -12,7 +12,7 @@
   </head>
   <body>
 	 <div id="page">
-    <div>Adressbuch: <a href="/">Start</a> &mdash; <a href="/login">Einloggen</a></div>
+    <div>Adressbuch: <a href="/">Start</a> &mdash; {% if session['username'] %}<a href="/edit">Einträge anlegen / bearbeiten</a> &mdash; <a href="/logout">Ausloggen</a> {% else %} <a href="/login">Einloggen</a>{% endif %}</div>
     <hr>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
