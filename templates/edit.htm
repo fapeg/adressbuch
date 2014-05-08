@@ -5,6 +5,106 @@
 
 <h1>Adressbuch</h1>
 
-<h2>kommt noch ... </h2>
-    
+<h2>Einträge bearbeiten</h2>
+
+{% if not id: %}
+    <div class="editlist">
+        <ul class="edit">
+        	{% for line in entries: %}
+           <a href="/edit/{{line['id']}}" title="Eintrag bearbeiten"> <li>
+        		{% for eintrag in line:  %}
+			
+                    {% if eintrag == line['id']: %}
+
+        			 {% elif eintrag == line['vorname'] or eintrag == line['name']: %}
+                         {{eintrag}}
+                    {% else: %}
+                        <small style="color:#A0A0A0;">{{eintrag}}</small>
+                    {% endif %}
+			
+        		{% endfor %}
+          </li>  </a>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+{% else: %}
+<p><ul class="delete">
+    <a href="/delete/{{entries['id']}}" onclick="if(!confirm('Möchtest du den Eintrag wirklich löschen?')){return false;}"><li><strong style="color:red; vertical-align:top;">Eintrag löschen</strong></li></a>
+</ul></p>
+<form action="" method="post" name="edit" style="margin-left:30px;">
+    {{form.hidden_tag()}}
+    <p>
+      <label>Vorname:<br>
+      {{form.vorname(size=30,value=entries['vorname'])}}</label><br>
+      {% for error in form.errors.vorname %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Name:<br>
+      {{form.name(size=30,value=entries['name'])}}</label><br>
+      {% for error in form.errors.name %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Titel:<br>
+      {{form.titel(size=30,value=entries['titel'])}}</label><br>
+      {% for error in form.errors.titel %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Straße:<br>
+      {{form.strasse(size=30,value=entries['strasse'])}}</label><br>
+      {% for error in form.errors.strasse %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>PLZ:<br>
+      {{form.plz(size=30,value=entries['plz'])}}</label><br>
+      {% for error in form.errors.plz %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Ort:<br>
+      {{form.ort(size=30,value=entries['ort'])}}</label><br>
+      {% for error in form.errors.ort %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Geburtsdatum:<br>
+      {{form.geburtsdatum(size=30,value=entries['geburtsdatum'])}}</label><br>
+      {% for error in form.errors.geburtsdatum %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Festnetz:<br>
+      {{form.festnetz(size=30,value=entries['festnetz'])}}</label><br>
+      {% for error in form.errors.festnetz %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Mobil:<br>
+      {{form.mobil(size=30,value=entries['mobil'])}}</label><br>
+      {% for error in form.errors.mobil %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>E-Mail:<br>
+      {{form.email(size=30,value=entries['email'])}}</label><br>
+      {% for error in form.errors.email %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Homepage:<br>
+      {{form.homepage(size=30,value=entries['homepage'])}}</label><br>
+      {% for error in form.errors.homepage %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Twitter:<br>
+      {{form.twitter(size=30,value=entries['twitter'])}}</label><br>
+      {% for error in form.errors.twitter %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <div style="display:none;"> <!-- display block wenn user-id doch angezeigt werden soll -->
+      <br><small>User-ID</small><br>{{form.userid(size=3,value=entries['id'])}}
+      </div>
+  </p>
+  <p><input type="submit" value="abschicken"></p>
+  
+</form>
+
+
+{% endif %}
+
 {% endblock %}

@@ -14,3 +14,8 @@ a {color:blue;text-decoration:underline;}
 a:visted {color:blue; text-decoration:underline;}
 .nohighlight {color:initial;text-decoration:none;}
 .error {color:red; font-weight:bold;}
+ul.edit { list-style-image: url('page_edit.png');}
+ul.delete { list-style-image: url('delete.png');}
+ul.flash { list-style-image: url('exclamation.png');}
+ul.edit li {margin-top:25px;}
+ul.delete a, ul.edit a {color:initial; text-decoration:none;}

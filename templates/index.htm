@@ -2,7 +2,7 @@
 <html>
 <head>
 
-	<link href="static/style.css" rel="stylesheet" type="text/css">
+	<link href="/static/style.css" rel="stylesheet" type="text/css">
 	<link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
     {% if title %}
     <title>{{title}} - Adressbuch</title>
@@ -12,13 +12,13 @@
   </head>
   <body>
 	 <div id="page">
-    <div>Adressbuch: <a href="/">Start</a> &mdash; {% if session['username'] %}<a href="/edit">Einträge anlegen / bearbeiten</a> &mdash; <a href="/logout">Ausloggen</a> {% else %} <a href="/login">Einloggen</a>{% endif %}</div>
+    <div>Adressbuch: <a href="/">Start</a> &mdash; {% if session['username'] %}<a href="/edit">Einträge verwalten</a> &mdash; <a href="/logout">Ausloggen</a><div style="display:inline;float:right;"><strong>Hallo, {{session['username']}}!</strong></div> {% else %} <a href="/login">Einloggen</a>{% endif %}</div>
     <hr>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-    <ul>
+    <ul class="flash">
     {% for message in messages %}
-        <li>{{ message }} </li>
+        <li>{{ message }}</li>
     {% endfor %}
     </ul>
     {% endif %}

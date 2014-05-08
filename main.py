@@ -4,16 +4,17 @@
 # Projektseminar Angewandte Informationswissenschaft                      
 from flask import Flask, render_template, g, flash, redirect, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 import datetime, hashlib, os, re
 from flask.ext.wtf import Form
 from flask.ext.login import LoginManager
-from wtforms import TextField, BooleanField, PasswordField
+from wtforms import TextField, BooleanField, PasswordField, HiddenField
 from wtforms.validators import Required
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'jHgFtjjGFdE5678ijbDDegh'
-app.config.from_object('config')
+app.config['CSRF_ENABLED'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///adressen.sqlite'
 db = SQLAlchemy(app)
 lm = LoginManager()
@@ -95,32 +96,70 @@ class Entry(db.Model):
       self.twitter = twitter
 	  
 
+class EditForm(Form):
+    userid =      TextField('userid')
+    vorname = TextField('vorname', validators = [Required(u"Bitte Feld ausfüllen!")])
+    name = TextField('name', validators = [Required(u"Bitte Feld ausfüllen!")])
+    titel = TextField('titel')
+    strasse = TextField('strasse')
+    plz = TextField('plz')
+    ort = TextField('ort')
+    geburtsdatum = TextField('geburtsdatum')
+    festnetz = TextField('festnetz')
+    mobil = TextField('mobil')
+    email = TextField('email')
+    homepage = TextField('homepage')
+    twitter = TextField('twitter')    
+
+
 
 class LoginForm(Form):
     username = TextField('username', validators = [Required("Bitte einen Benutzernamen eingeben!")])
     password = PasswordField('password', validators = [Required("Bitte ein Passwort eingeben!")]) 
-	
     remember_me = BooleanField('remember_me', default = False)
 
 
 
 @app.route('/')
 def hello_world(): 
-	entries=Entry.query.with_entities(Entry.vorname,Entry.name,Entry.titel,Entry.strasse,Entry.plz,Entry.ort,Entry.geburtsdatum,Entry.festnetz,Entry.mobil,Entry.email,Entry.homepage,Entry.twitter)    
-	return render_template('anzeige.htm', entries=entries) 
+	entries=Entry.query.with_entities(Entry.vorname,Entry.name,Entry.titel,Entry.strasse,Entry.plz,Entry.ort,Entry.geburtsdatum,Entry.festnetz,Entry.mobil,Entry.email,Entry.homepage,Entry.twitter)       
+	return render_template('anzeige.htm', entries=entries)   
 	
     
-@app.route('/edit')
+
+@app.route('/edit', defaults={'id': None})
+@app.route('/edit/<id>', methods = ['GET', 'POST'])
 @login_required
-def edit():
-    return render_template('edit.htm') 
+def edit(id):
+    form = EditForm()
+    entries = Entry.query.with_entities(Entry.id, Entry.vorname,Entry.name,Entry.titel,Entry.strasse,Entry.plz,Entry.ort, Entry.geburtsdatum, Entry.festnetz, Entry.mobil, Entry.email, Entry.homepage,Entry.twitter)
+    if id is not None:
+        if form.validate_on_submit():
+            # text funktion escapet den string
+            query = text("UPDATE daten SET vorname=:vorname, name=:name, titel=:titel,strasse=:strasse, plz=:plz, ort=:ort, geburtsdatum=:geburtsdatum, festnetz=:festnetz, mobil=:mobil, email=:email, homepage=:homepage, twitter=:twitter where id=:userid ;")
+            flash("Eintrag bearbeitet!")
+            
+            db.engine.execute(query, vorname=form.vorname.data, name=form.name.data, titel=form.titel.data, strasse=form.strasse.data, plz=form.plz.data, ort=form.ort.data, geburtsdatum=form.geburtsdatum.data, festnetz=form.festnetz.data, mobil=form.mobil.data, email=form.email.data, homepage=form.homepage.data, twitter=form.twitter.data, userid=form.userid.data)
+            
+        entries = Entry.query.filter_by(id=id).with_entities(Entry.id, Entry.vorname,Entry.name,Entry.titel,Entry.strasse,Entry.plz,Entry.ort, Entry.geburtsdatum, Entry.festnetz, Entry.mobil, Entry.email, Entry.homepage,Entry.twitter).first()
+    return render_template('edit.htm', entries=entries, id=id , form=form)  
+
+		
+@app.route('/delete/<id>')
+@login_required
+def delete(id):
+    if id is not None:
+        query = text("DELETE FROM daten WHERE id = :id;")
+        db.engine.execute(query, id=id)
+        flash(u"Benutzer mit der ID " + str(id) + u" gelöscht!")
+        return redirect('/edit')
+
 	
-	
-@app.route('/login', methods = ['GET', 'POST'])
+@app.route('/login', methods = ['GET', 'POST']) 
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        flash('Login requested for user="' + form.username.data + '", remember_me=' + str(form.remember_me.data))
+        #        flash('Login requested for user="' + form.username.data + '", remember_me=' + str(form.remember_me.data))
         p_username = form.username.data
         p_password = form.password.data
         remember_me = False
