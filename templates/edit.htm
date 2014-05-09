@@ -5,10 +5,16 @@
 
 <h1>Adressbuch</h1>
 
+    <ul class="add">
+    <a href="/new"><li><strong style="color:blue;vertical-align:top;">neuen Eintrag anlegen</strong></li></a>
+    </ul>
+
 <h2>Einträge bearbeiten</h2>
 
 {% if not id: %}
+
     <div class="editlist">
+        
         <ul class="edit">
         	{% for line in entries: %}
            <a href="/edit/{{line['id']}}" title="Eintrag bearbeiten"> <li>

@@ -12,15 +12,17 @@
   </head>
   <body>
 	 <div id="page">
-    <div>Adressbuch: <a href="/">Start</a> &mdash; {% if session['username'] %}<a href="/edit">Einträge verwalten</a> &mdash; <a href="/logout">Ausloggen</a><div style="display:inline;float:right;"><strong>Hallo, {{session['username']}}!</strong></div> {% else %} <a href="/login">Einloggen</a>{% endif %}</div>
-    <hr>
-    {% with messages = get_flashed_messages() %}
+    <div>Adressbuch: <a href="/">Start</a> &mdash; {% if session['username'] %}<a href="/edit">Einträge verwalten</a> &mdash; <a href="/logout">Ausloggen</a><div style="display:inline;float:right;"><form class='searchform' name='search' method='get' action='/search'>{{searchform.searchfield(size=10, placeholder='suchen ...')}}</form> <strong>Hallo, {{session['username']}}!</strong></div> {% else %} <a href="/login">Einloggen</a><div style="display:inline;float:right;"><form class='searchform' name='search' method='get' action='/search'>{{searchform.searchfield(size=10, placeholder='suchen ...')}}</form> </div>{% endif %} </div>
+    <hr style='margin-top:20px;'>
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    <ul class="flash">
-    {% for message in messages %}
+   
+    {% for category, message in messages %}
+     <ul class="{{category}}">
         <li>{{ message }}</li>
+         </ul>
     {% endfor %}
-    </ul>
+   
     {% endif %}
     {% endwith %}
     {% block content %}{% endblock %}

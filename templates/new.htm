@@ -1,0 +1,77 @@
+<!-- extend from base layout -->
+{% extends "index.htm" %}
+
+{% block content %}
+
+<h1>Adressbuch</h1>
+
+<h2>Neuer Eintrag</h2>
+<form action="" method="post" name="edit" style="margin-left:30px;">
+    {{form.hidden_tag()}}
+    <p>
+      <label>Vorname:<br>
+      {{form.vorname(size=30)}}</label><br>
+      {% for error in form.errors.vorname %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Name:<br>
+      {{form.name(size=30)}}</label><br>
+      {% for error in form.errors.name %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Titel:<br>
+      {{form.titel(size=30)}}</label><br>
+      {% for error in form.errors.titel %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Straße:<br>
+      {{form.strasse(size=30)}}</label><br>
+      {% for error in form.errors.strasse %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>PLZ:<br>
+      {{form.plz(size=30)}}</label><br>
+      {% for error in form.errors.plz %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Ort:<br>
+      {{form.ort(size=30)}}</label><br>
+      {% for error in form.errors.ort %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Geburtsdatum:<br>
+      {{form.geburtsdatum(size=30)}}</label><br>
+      {% for error in form.errors.geburtsdatum %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Festnetz:<br>
+      {{form.festnetz(size=30)}}</label><br>
+      {% for error in form.errors.festnetz %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Mobil:<br>
+      {{form.mobil(size=30)}}</label><br>
+      {% for error in form.errors.mobil %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>E-Mail:<br>
+      {{form.email(size=30)}}</label><br>
+      {% for error in form.errors.email %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Homepage:<br>
+      {{form.homepage(size=30)}}</label><br>
+      {% for error in form.errors.homepage %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Twitter:<br>
+      {{form.twitter(size=30)}}</label><br>
+      {% for error in form.errors.twitter %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+  </p>
+  <p><input type="submit" value="abschicken"></p>
+  
+</form>
+
+{% endblock %}

@@ -13,9 +13,12 @@ select {font-family: 'Droid Sans', sans-serif; font-size:14px;}
 a {color:blue;text-decoration:underline;}
 a:visted {color:blue; text-decoration:underline;}
 .nohighlight {color:initial;text-decoration:none;}
-.error {color:red; font-weight:bold;}
 ul.edit { list-style-image: url('page_edit.png');}
 ul.delete { list-style-image: url('delete.png');}
-ul.flash { list-style-image: url('exclamation.png');}
+ul.accept { list-style-image: url('accept.png'); background-color:lightgreen; font-weight:bold; padding:15px 15px 15px 30px; width:400px;}
+ul.error { list-style-image: url('exclamation.png'); background-color:#FC6262; font-weight:bold; padding:15px 15px 15px 30px; width:400px;}
+.searchform { display:inline; padding:10px;}
+.searchform input {border: 1px solid black; padding: 5px;}
+ul.add { list-style-image: url('add.png');}
 ul.edit li {margin-top:25px;}
-ul.delete a, ul.edit a {color:initial; text-decoration:none;}
+ul.delete a, ul.edit a , ul.add a {color:initial; text-decoration:none;}

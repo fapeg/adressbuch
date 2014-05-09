@@ -2,9 +2,9 @@
 # Autor: Giulia Kirstein, Daniel Gros, Fabian Pegel
 # Mai 2014
 # Projektseminar Angewandte Informationswissenschaft                      
-from flask import Flask, render_template, g, flash, redirect, session
+from flask import Flask, render_template, g, flash, redirect, session, request
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
+from sqlalchemy import text, desc
 import datetime, hashlib, os, re
 from flask.ext.wtf import Form
 from flask.ext.login import LoginManager
@@ -109,7 +109,10 @@ class EditForm(Form):
     mobil = TextField('mobil')
     email = TextField('email')
     homepage = TextField('homepage')
-    twitter = TextField('twitter')    
+    twitter = TextField('twitter')   
+    
+class SearchForm(Form): 
+    searchfield = TextField('searchfield', validators = [Required(u"Bitte Feld ausfüllen!")])
 
 
 
@@ -122,41 +125,74 @@ class LoginForm(Form):
 
 @app.route('/')
 def hello_world(): 
-	entries=Entry.query.with_entities(Entry.vorname,Entry.name,Entry.titel,Entry.strasse,Entry.plz,Entry.ort,Entry.geburtsdatum,Entry.festnetz,Entry.mobil,Entry.email,Entry.homepage,Entry.twitter)       
-	return render_template('anzeige.htm', entries=entries)   
+    searchform = SearchForm(csrf_enabled=False)
+    entries=Entry.query.with_entities(Entry.vorname,Entry.name,Entry.titel, Entry.strasse,Entry.plz,Entry.ort,Entry.geburtsdatum,Entry.festnetz,Entry.mobil,Entry.email,Entry.homepage,Entry.twitter) 
+    return render_template('anzeige.htm', entries=entries, searchform=searchform)   
 	
-    
+   
+   
+   
+@app.route('/search', methods = ['GET', 'POST'])
+def search(): 
+    searchform = SearchForm(csrf_enabled=False)
+    if request.args['searchfield']:
+        begriff = request.args['searchfield']
+        begriff_trunk = '%'+begriff+'%'
+        query = text("SELECT vorname,name,titel,strasse,plz,ort,geburtsdatum,festnetz,mobil,email,homepage,twitter FROM daten WHERE (vorname  || ' ' || name like :begriff_trunk) or vorname like :begriff_trunk or name like :begriff_trunk or strasse like :begriff_trunk or ort like :begriff_trunk or plz like :begriff_trunk or geburtsdatum like :begriff_trunk or homepage like :begriff_trunk or twitter like :begriff_trunk or mobil like :begriff_trunk or festnetz like :begriff_trunk or email like :begriff_trunk;")
+        searchentries = db.engine.execute(query, begriff_trunk=begriff_trunk)
+    else:
+        return redirect('/')
+    return render_template('search.htm', searchform=searchform, begriff=begriff, searchentries=searchentries)    
+ 
 
 @app.route('/edit', defaults={'id': None})
 @app.route('/edit/<id>', methods = ['GET', 'POST'])
 @login_required
 def edit(id):
     form = EditForm()
-    entries = Entry.query.with_entities(Entry.id, Entry.vorname,Entry.name,Entry.titel,Entry.strasse,Entry.plz,Entry.ort, Entry.geburtsdatum, Entry.festnetz, Entry.mobil, Entry.email, Entry.homepage,Entry.twitter)
+    searchform = SearchForm(csrf_enabled=False)
+    entries = Entry.query.with_entities(Entry.id, Entry.vorname,Entry.name,Entry.titel,Entry.strasse,Entry.plz,Entry.ort, Entry.geburtsdatum, Entry.festnetz, Entry.mobil, Entry.email, Entry.homepage,Entry.twitter).order_by(desc(Entry.id))
     if id is not None:
         if form.validate_on_submit():
             # text funktion escapet den string
             query = text("UPDATE daten SET vorname=:vorname, name=:name, titel=:titel,strasse=:strasse, plz=:plz, ort=:ort, geburtsdatum=:geburtsdatum, festnetz=:festnetz, mobil=:mobil, email=:email, homepage=:homepage, twitter=:twitter where id=:userid ;")
-            flash("Eintrag bearbeitet!")
+            flash("Eintrag bearbeitet!", 'accept')
             
             db.engine.execute(query, vorname=form.vorname.data, name=form.name.data, titel=form.titel.data, strasse=form.strasse.data, plz=form.plz.data, ort=form.ort.data, geburtsdatum=form.geburtsdatum.data, festnetz=form.festnetz.data, mobil=form.mobil.data, email=form.email.data, homepage=form.homepage.data, twitter=form.twitter.data, userid=form.userid.data)
             
         entries = Entry.query.filter_by(id=id).with_entities(Entry.id, Entry.vorname,Entry.name,Entry.titel,Entry.strasse,Entry.plz,Entry.ort, Entry.geburtsdatum, Entry.festnetz, Entry.mobil, Entry.email, Entry.homepage,Entry.twitter).first()
-    return render_template('edit.htm', entries=entries, id=id , form=form)  
+    return render_template('edit.htm', entries=entries, id=id , form=form, searchform=searchform)  
 
-		
+
+
+@app.route('/new', methods = ['GET', 'POST'])
+@login_required
+def new():
+    searchform = SearchForm(csrf_enabled=False)
+    form = EditForm()
+    if form.validate_on_submit():
+        query = text("INSERT INTO daten ('id','vorname','name','titel','strasse','plz','ort','geburtsdatum','festnetz','mobil','email','homepage','twitter') VALUES (NULL, :vorname,:name,:titel,:strasse,:plz,:ort,:geburtsdatum,:festnetz,:mobil,:email,:homepage,:twitter);")
+        db.engine.execute(query, vorname=form.vorname.data, name=form.name.data, titel=form.titel.data, strasse=form.strasse.data, plz=form.plz.data, ort=form.ort.data, geburtsdatum=form.geburtsdatum.data, festnetz=form.festnetz.data, mobil=form.mobil.data, email=form.email.data, homepage=form.homepage.data, twitter=form.twitter.data)
+        flash("Eintrag wurde angelegt!", 'accept')
+        return redirect('/edit')
+    else:
+        return render_template('new.htm', form=form, searchform=searchform)
+    
+    
+
 @app.route('/delete/<id>')
 @login_required
 def delete(id):
     if id is not None:
         query = text("DELETE FROM daten WHERE id = :id;")
         db.engine.execute(query, id=id)
-        flash(u"Benutzer mit der ID " + str(id) + u" gelöscht!")
+        flash(u"Benutzer mit der ID " + str(id) + u" gelöscht!", 'accept')
         return redirect('/edit')
 
 	
 @app.route('/login', methods = ['GET', 'POST']) 
 def login():
+    searchform = SearchForm(csrf_enabled=False)
     form = LoginForm()
     if form.validate_on_submit():
         #        flash('Login requested for user="' + form.username.data + '", remember_me=' + str(form.remember_me.data))
@@ -170,13 +206,14 @@ def login():
         if user is not None and user.passwort == hashlib.md5(p_password).hexdigest():
             session['username']=user.username
             login_user(user, remember = remember_me)
+            flash('Herzlich Willkommen, '+session['username']+'!', 'accept')
             return redirect('/')
         else:
-            flash('Benutzername oder Passwort falsch!')
+            flash('Benutzername oder Passwort falsch!', 'error')
 
     return render_template('login.htm', 
         title = 'Sign In',
-        form = form)
+        form = form, searchform=searchform)
         
 @app.route('/logout')
 def logout():

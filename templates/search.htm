@@ -1,0 +1,29 @@
+<!-- extend from base layout -->
+{% extends "index.htm" %}
+
+{% block content %}
+
+<h1>Adressbuch</h1>
+
+<h2>Login</h2>
+Suche nach <strong>{{begriff}}</strong>
+
+<table style="width:600px;"> 
+	<th>Vorname</th> <th>Name</th> <th>Titel</th> <th>Straße</th> <th>PLZ</th> <th>Ort</th> <th>Geburtsdatum</th> <th>Festnetz</th> <th>Mobil</th> <th>E-Mail</th> <th>Homepage</th> <th>Twitter</th>
+		{% for line in searchentries: %}
+			<tr>
+			{% for eintrag in line:  %}
+			
+            {% if begriff|lower() == eintrag|lower(): %}
+			<td style="background-color:yellow;">{{eintrag}}</td>
+            {% else: %}
+            <td>{{eintrag}}</td>
+            {% endif %}
+			
+			{% endfor %}
+		</tr>
+		{% endfor %}
+</table>
+
+
+{% endblock %}
