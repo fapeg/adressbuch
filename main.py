@@ -5,12 +5,14 @@
 from flask import Flask, render_template, g, flash, redirect, session, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text, desc
-import datetime, hashlib, os, re
+import hashlib, os, re
 from flask.ext.wtf import Form
 from flask.ext.login import LoginManager
 from wtforms import TextField, BooleanField, PasswordField, HiddenField
-from wtforms.validators import Required, EqualTo, Length
+from wtforms.validators import Required, EqualTo, Length, ValidationError
 from flask.ext.login import login_user, logout_user, current_user, login_required
+from datetime import timedelta, date
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'jHgFtjjGFdE5678ijbDDegh'
@@ -94,7 +96,60 @@ class Entry(db.Model):
       self.email = email
       self.homepage = homepage
       self.twitter = twitter
-	  
+      
+# extra funktion für datum nicht aus formular    
+def is_german_date_single(date):
+    datearray = date.split('.')
+    if len(datearray) == 3:
+        if len(datearray[0])!=2 or int(datearray[0])>31:
+             return False
+        if len(datearray[1])!=2 or int(datearray[1])>12:
+            return False
+        if len(datearray[2])!=4:
+            return False
+        for element in datearray:
+            if element.isdigit() == False:
+                return False
+    else: 
+        return False
+
+      
+# takes date in format 'dd.mm.yyyy'      
+def birthday_in_x_days(xdays, birthdate):
+    if is_german_date_single(birthdate) == False:
+            return False
+    birthdate_array=birthdate.split('.')
+    birthdate_new = date(int(birthdate_array[2]), int(birthdate_array[1]), int(birthdate_array[0]))
+    today_future = date.today()+timedelta(days=xdays)
+	
+	# dd = datedifference
+	# ersetzen von geburtsjahr mit aktuellem jahr
+    birthday = date(today_future.year, birthdate_new.month, birthdate_new.day)
+    dd = today_future - birthday
+    if dd.days <= xdays and dd.days>=0:
+		print "Geburtstag innerhalb der nächsten "+str(xdays)+" Tage"
+		return True
+		
+    else:
+        return False
+
+
+
+     
+def is_german_date(form, field):
+    datearray = field.data.split('.')
+    if len(datearray) == 3:
+        if len(datearray[0])!=2 or int(datearray[0])>31:
+             raise ValidationError('Geburtsdatum entspricht nicht dem vorgegebenem Format!')
+        if len(datearray[1])!=2 or int(datearray[1])>12:
+            raise ValidationError('Geburtsdatum entspricht nicht dem vorgegebenem Format!')
+        if len(datearray[2])!=4:
+            raise ValidationError('Geburtsdatum entspricht nicht dem vorgegebenem Format!')
+        for element in datearray:
+            if element.isdigit() == False:
+                raise ValidationError('Geburtsdatum entspricht nicht dem vorgegebenem Format!')
+    else: 
+        raise ValidationError('Geburtsdatum entspricht nicht dem vorgegebenem Format!')
 
 class EditForm(Form):
     userid =      TextField('userid')
@@ -104,7 +159,7 @@ class EditForm(Form):
     strasse = TextField('strasse')
     plz = TextField('plz')
     ort = TextField('ort')
-    geburtsdatum = TextField('geburtsdatum')
+    geburtsdatum = TextField('geburtsdatum', validators = [Required(u"Bitte Feld ausfüllen!"), is_german_date])
     festnetz = TextField('festnetz')
     mobil = TextField('mobil')
     email = TextField('email')
@@ -127,12 +182,32 @@ class ChangePassForm(Form):
     password2    = PasswordField('password2', validators = [Required("Bitte ein neues Passwort eingeben!"), EqualTo('password1', message=u'Passwörter müssen übereinstimmen!')])
 
 
+
 @app.route('/')
 def hello_world(): 
     searchform = SearchForm(csrf_enabled=False)
     entries=Entry.query.with_entities(Entry.vorname,Entry.name,Entry.titel, Entry.strasse,Entry.plz,Entry.ort,Entry.geburtsdatum,Entry.festnetz,Entry.mobil,Entry.email,Entry.homepage,Entry.twitter) 
     return render_template('anzeige.htm', entries=entries, searchform=searchform)   
 	
+    
+@app.route('/auswertungen')
+def auswertungen(): 
+    searchform = SearchForm(csrf_enabled=False)
+    entries=Entry.query.with_entities(Entry.vorname,Entry.name, Entry.geburtsdatum)
+    correct_entries = []
+    ages = []
+    birthday_dict = {'01':[],'02':[],'03':[],'04':[],'05':[],'06':[],'07':[],'08':[], '09':[],'10':[],'11':[],'12':[]}
+    
+    for entry in entries:
+        if is_german_date_single(entry.geburtsdatum) != False:
+            birthday_dict[entry.geburtsdatum.split('.')[1]].append(entry)
+        if birthday_in_x_days(30,entry.geburtsdatum):
+            correct_entries.append(entry)
+            ages.append(date.today().year-int(entry.geburtsdatum.split('.')[2]))
+    print correct_entries
+    print birthday_dict
+    return render_template('auswertungen.htm', searchform=searchform, correct_entries=correct_entries, ages=ages, birthday_dict=birthday_dict)   
+
 
 @app.route('/profile', methods = ['GET', 'POST'])
 def profile(): 

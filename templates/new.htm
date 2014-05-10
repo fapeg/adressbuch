@@ -40,7 +40,7 @@
       <span style="color: red;">[{{error}}]</span>
       {% endfor %}<br>
       <label>Geburtsdatum:<br>
-      {{form.geburtsdatum(size=30)}}</label><br>
+      {{form.geburtsdatum(size=30,placeholder='Format: 02.07.1990')}}</label><br>
       {% for error in form.errors.geburtsdatum %}
       <span style="color: red;">[{{error}}]</span>
       {% endfor %}<br>

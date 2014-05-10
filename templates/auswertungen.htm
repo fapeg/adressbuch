@@ -1,0 +1,120 @@
+<!-- extend from base layout -->
+{% extends "index.htm" %}
+
+{% block content %}
+
+<h1>Adressbuch</h1>
+
+<h2>Auswertungen</h2>
+
+<h3>Geburtstage in den nächsten 30 Tagen</h3>
+		<ul>
+            
+        {% for line in correct_entries: %}
+        
+                <li>{{line['vorname']}} {{line['name']}} ({{line['geburtsdatum']}}, wird {{ages[correct_entries.index(line)]}} Jahre alt)</li>
+            
+            
+        {% endfor %}
+    </ul>
+<h3>Geburtstagsübersicht für das Jahr</h3>
+<table class="calendar" style="width:600px;">
+    
+    <tr>
+        <td><strong>Januar</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['01']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+    </td>
+        <td><strong>Februar</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['02']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+    </td>
+        <td><strong>März</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['03']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+    </td>
+        <td><strong>April</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['04']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+    </td>
+    
+    </tr>
+    
+    <tr>
+
+        <td><strong>Mai</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['05']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+        </td>
+        <td><strong>Juni</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['06']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+        </td>
+        <td><strong>Juli</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['07']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+        </td>
+        <td><strong>August</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['08']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>September</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['09']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+        </td>
+        <td><strong>Oktober</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['10']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+        </td>
+        <td><strong>November</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['11']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+        </td>
+        <td><strong>Dezember</strong><br>
+            <div style="overflow:scroll"><ul>
+            {% for eintrag in birthday_dict['12']: %}
+            <li>{{eintrag[0]}} {{eintrag[1]}} ({{eintrag[2]}})</li>
+            {% endfor %}
+            </ul></div>
+        </td>
+    </tr>
+    
+    
+</table>
+
+{% endblock %}
