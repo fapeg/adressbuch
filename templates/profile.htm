@@ -1,0 +1,37 @@
+<!-- extend from base layout -->
+{% extends "index.htm" %}
+
+{% block content %}
+
+<h1>Adressbuch</h1>
+
+<h2>Mein Profil</h2>
+
+
+<div style="float:left;">
+    <h3>Passwort ändern</h3>
+    
+<form action="" method="post" name="edit" style="margin-left:30px;">
+    {{passwordform.hidden_tag()}}
+    <p>
+      <label>Altes Passwort:<br>
+      {{passwordform.password_old(size=30)}}</label><br>
+      {% for error in passwordform.errors.password_old %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br><br>
+      <label>Neues Passwort:<br>
+      {{passwordform.password1(size=30)}}</label><br>
+      {% for error in passwordform.errors.password1 %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+      <label>Neues Passwort bestätigen:<br>
+      {{passwordform.password2(size=30)}}</label><br>
+      {% for error in passwordform.errors.password2 %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}<br>
+  </p>
+    <p><input type="submit" value="abschicken"></p>
+</form>
+</div>
+
+{% endblock %}

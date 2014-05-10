@@ -9,7 +9,7 @@ import datetime, hashlib, os, re
 from flask.ext.wtf import Form
 from flask.ext.login import LoginManager
 from wtforms import TextField, BooleanField, PasswordField, HiddenField
-from wtforms.validators import Required
+from wtforms.validators import Required, EqualTo, Length
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
 app = Flask(__name__)
@@ -121,6 +121,10 @@ class LoginForm(Form):
     password = PasswordField('password', validators = [Required("Bitte ein Passwort eingeben!")]) 
     remember_me = BooleanField('remember_me', default = False)
 
+class ChangePassForm(Form):
+    password_old = PasswordField('password_old', validators = [Required("Bitte altes Passwort eingeben!")])
+    password1    = PasswordField('password1', validators = [Required("Bitte ein neues Passwort eingeben!"), Length(min=8, message=u"Passwort muss mindestens 8 Zeichen lang sein!")]) 
+    password2    = PasswordField('password2', validators = [Required("Bitte ein neues Passwort eingeben!"), EqualTo('password1', message=u'Passwörter müssen übereinstimmen!')])
 
 
 @app.route('/')
@@ -129,7 +133,23 @@ def hello_world():
     entries=Entry.query.with_entities(Entry.vorname,Entry.name,Entry.titel, Entry.strasse,Entry.plz,Entry.ort,Entry.geburtsdatum,Entry.festnetz,Entry.mobil,Entry.email,Entry.homepage,Entry.twitter) 
     return render_template('anzeige.htm', entries=entries, searchform=searchform)   
 	
-   
+
+@app.route('/profile', methods = ['GET', 'POST'])
+def profile(): 
+    searchform = SearchForm(csrf_enabled=False)
+    passwordform = ChangePassForm()
+    if passwordform.validate_on_submit():
+        user = User.query.filter_by(username=session['username']).first()
+        if user is not None and user.passwort == hashlib.md5(passwordform.password_old.data).hexdigest():
+            neues_pw = hashlib.md5(passwordform.password1.data).hexdigest()
+            query = text("UPDATE benutzer SET passwort=:passwort WHERE username=:username")
+            db.engine.execute(query, username=session['username'], passwort=neues_pw)
+            flash(u"Passwörter geändert!", 'accept')
+        else:
+            flash("Altes Passwort ist falsch!",'error')
+        
+    return render_template('profile.htm', searchform=searchform, passwordform=passwordform)   
+ 
    
    
 @app.route('/search', methods = ['GET', 'POST'])
