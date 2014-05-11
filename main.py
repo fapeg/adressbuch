@@ -328,6 +328,7 @@ def logout():
     if session['username']:
         session.pop('username', None)
     logout_user()
+    flash('Du wurdest erfolgreich ausgeloggt!','accept')
     return redirect('/login')
 
         
