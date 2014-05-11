@@ -197,6 +197,8 @@ def hello_world():
 @app.route('/auswertungen')
 def auswertungen(): 
     searchform = SearchForm(csrf_enabled=False)
+    # Anzahl der Personen pro Stadt
+    orte = db.engine.execute('SELECT ort, count(ort) as anzahl FROM daten group by ort order by anzahl desc;')
     entries=Entry.query.with_entities(Entry.vorname,Entry.name, Entry.geburtsdatum)
     correct_entries = []
     ages = []
@@ -212,7 +214,7 @@ def auswertungen():
             ages.append(date.today().year-int(entry.geburtsdatum.split('.')[2]))
     print correct_entries
     print birthday_dict
-    return render_template('auswertungen.htm', searchform=searchform, correct_entries=correct_entries, ages=ages, birthday_dict=birthday_dict)   
+    return render_template('auswertungen.htm', searchform=searchform, correct_entries=correct_entries, ages=ages, birthday_dict=birthday_dict, orte=orte)   
 
 
 # Profilseite, bisher zum Passwort ändern

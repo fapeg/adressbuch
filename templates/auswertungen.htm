@@ -7,6 +7,16 @@
 
 <h2>Auswertungen</h2>
 
+<h3>Wie viele Personen wohnen in welcher Stadt?</h3>
+<ul>
+    {% for line in orte: %}
+    <li>
+        {{line['ort']}} ({{line['anzahl']}} Personen)
+    </li>
+    {% endfor %}
+    </ul>
+    
+
 <h3>Geburtstage in den nächsten 30 Tagen</h3>
 		<ul>
             
