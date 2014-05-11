@@ -15,6 +15,7 @@ Suche nach <strong>{{begriff}}</strong>
 			{% for eintrag in line:  %}
 			
             {% if begriff|lower() == eintrag|lower(): %}
+            <!-- wenn Suchbegriffe übereinstimmen, hebe sie gelb hervor -->
 			<td style="background-color:yellow;">{{eintrag}}</td>
             {% else: %}
             <td>{{eintrag}}</td>
